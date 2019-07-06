@@ -43,5 +43,8 @@ DEPENDENCIES
   rspec (~> 3.8)
   rubocop (~> 0.72.0)
 
+RUBY VERSION
+   ruby 2.6.3p62
+
 BUNDLED WITH
    2.0.2
