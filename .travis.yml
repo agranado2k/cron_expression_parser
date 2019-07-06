@@ -1,0 +1,9 @@
+language: ruby
+services:
+- docker
+before_install:
+- docker build -t agranado2k/cron_expression_parser.
+script:
+- bundle exec rspec
+- bundle exec bundle audit
+- bundle exec rubocop

@@ -1,4 +1,5 @@
 FROM ruby:2.6.3-alpine3.10
+RUN apk add --update build-base
 RUN gem install bundler
 
 WORKDIR /app
