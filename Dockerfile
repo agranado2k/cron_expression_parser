@@ -3,7 +3,7 @@ RUN apk add --update build-base
 
 WORKDIR /app
 ADD Gemfile Gemfile.lock /app/
-RUN gem install bundler && bundle update --bundler
+RUN gem install bundler:2.0.2
 RUN bundle install
 
 ADD . .
