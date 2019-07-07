@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/agranado2k/cron_expression_parser.svg?branch=master)](https://travis-ci.org/agranado2k/cron_expression_parser)
 # Cron Expression Parser 
 
 Small project ot parse cron expression
