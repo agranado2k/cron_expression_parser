@@ -11,7 +11,8 @@ describe CronExpressionParser::Main do
 
   let(:fake_io) { FakeIO.new }
   let(:parser) { CronExpressionParser::Parser.new }
-  subject { CronExpressionParser::Main.new(parser: parser, io: fake_io) }
+  let(:formatter) { CronExpressionParser::Formatter.new }
+  subject { CronExpressionParser::Main.new(parser: parser, formatter: formatter, io: fake_io) }
   context 'when pass valid cron string' do
     let(:input) { '*/15 0 1,15 * 1-5 /usr/bin/find' }
     let(:output) do
