@@ -19,13 +19,14 @@ module CronExpressionParser
   # String parser
   class Parser
     def parse(str)
+      str = str.split(/\s+/)
       {
         minute: parse_rule_for(str, :minute),
         hour: parse_rule_for(str, :hour),
         day_of_month: parse_rule_for(str, :day_of_month),
         month: parse_rule_for(str, :month),
         day_of_week: parse_rule_for(str, :day_of_week),
-        command: '/usr/bin/find'
+        command: str.last
       }
     end
 
@@ -48,7 +49,7 @@ module CronExpressionParser
       end
 
       def str_for(str, time_unit)
-        str.split(/\s+/)[POSITION[time_unit]]
+        str[POSITION[time_unit]]
       end
 
       def all_range_for(time_unit)
@@ -71,7 +72,7 @@ module CronExpressionParser
         r_end = RANGES[unit][1]
         range = [r_start]
         interval = str.match(/^\*\/(\d+)$/)[1].to_i
-        p interval
+
         while ((next_period = range.last + interval) <= r_end) do
           range.push next_period
         end

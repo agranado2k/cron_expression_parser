@@ -66,7 +66,7 @@ describe CronExpressionParser::Parser do
 
       context 'when define command' do
         let(:input) { '0 0 0 0 0 /different/command' }
-        let(:local_output) { output(commmand: '/different/command') }
+        let(:local_output) { output(command: '/different/command') }
 
         it { expect(subject.parse(input)).to eq(local_output) }
       end
