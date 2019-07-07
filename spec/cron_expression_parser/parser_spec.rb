@@ -116,25 +116,25 @@ describe CronExpressionParser::Parser do
     context 'when input has less then 6 part' do
       let(:input) { '*/15 1,15 * 1-5 /usr/bin/find' }
       let(:msg) { 'Must have 6 parts' }
-      it { expect{ subject.parse(input) }.to raise_error error_class, msg }
+      it { expect { subject.parse(input) }.to raise_error error_class, msg }
     end
 
     context 'when one of the time inputs is not valid' do
       let(:input) { '*/15 0+1 1,15 * 1-5 /usr/bin/find' }
       let(:msg) { 'Unexpected option: \'0+1\'' }
-      it { expect{ subject.parse(input) }.to raise_error error_class, msg }
+      it { expect { subject.parse(input) }.to raise_error error_class, msg }
     end
 
     context 'when unit time is not allowed' do
       let(:input) { '60 0 1 1 1 /usr/bin/find' }
       let(:msg) { 'Not allowed value for minute: \'60\', allowed range 0-59' }
-      it { expect{ subject.parse(input) }.to raise_error error_class, msg }
+      it { expect { subject.parse(input) }.to raise_error error_class, msg }
     end
 
     context 'when unit time is out of range' do
       let(:input) { '00 0 1 0-4 1 /usr/bin/find' }
       let(:msg) { 'Not allowed value for month: \'0-4\', allowed range 1-12' }
-      it { expect{ subject.parse(input) }.to raise_error error_class, msg }
+      it { expect { subject.parse(input) }.to raise_error error_class, msg }
     end
   end
 end

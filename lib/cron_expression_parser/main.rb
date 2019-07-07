@@ -3,7 +3,8 @@
 module CronExpressionParser
   # Class that manage the command execution
   class Main
-    def initialize(io:)
+    def initialize(parser:, io:)
+      @parser = parser
       @io = io
     end
 

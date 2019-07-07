@@ -16,8 +16,8 @@ module CronExpressionParser
 
     private
 
-      def format_line(input, type)
-        input[type].join(' ')
-      end
+    def format_line(input, type)
+      input[type].join(' ')
+    end
   end
 end
