@@ -1,6 +1,12 @@
+AllCops:
+  Exclude:
+    - 'bin/*'
+
 Metrics/BlockLength:
   Max: 120
 Metrics/ClassLength:
   Max: 120
 Metrics/LineLength:
   Max: 100
+Metrics/MethodLength:
+  Max: 11

@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+require_relative './rules/whole_range'
+require_relative './rules/sub_range'
+require_relative './rules/by_interval'
+require_relative './rules/explicity_range'
+require_relative './rules/base_range'
+
 module CronExpressionParser
   class ValidationError < RuntimeError; end
 
@@ -40,19 +46,20 @@ module CronExpressionParser
       tu_str = str_for(str, time_unit)
       raise ValidationError, "Unexpected option: '#{tu_str}'" if invalid_str?(tu_str)
 
-      if full_range_rule?(tu_str)
-        all_range_for(time_unit)
-      elsif sub_range_rule?(tu_str)
-        sub_range(tu_str, time_unit)
-      elsif by_interval_rule?(tu_str)
-        interval_range(tu_str, time_unit)
-      elsif explicity_range_rule?(tu_str)
-        explicity_range(tu_str)
+      selecte_rule(tu_str, time_unit).exec
+    end
+
+    def selecte_rule(str, unit)
+      if full_range_rule?(str)
+        CronExpressionParser::Rules::WholeRange.new(str, unit, RANGES)
+      elsif sub_range_rule?(str)
+        CronExpressionParser::Rules::SubRange.new(str, unit, RANGES)
+      elsif by_interval_rule?(str)
+        CronExpressionParser::Rules::ByInterval.new(str, unit, RANGES)
+      elsif explicity_range_rule?(str)
+        CronExpressionParser::Rules::ExplicityRange.new(str, unit, RANGES)
       else
-        str = tu_str.to_i
-        range = [str]
-        validate_range(range, time_unit, str)
-        range
+        CronExpressionParser::Rules::BaseRange.new(str, unit, RANGES)
       end
     end
 
@@ -62,52 +69,8 @@ module CronExpressionParser
       true
     end
 
-    def validate_range(range, unit, str)
-      r_start = RANGES[unit][0]
-      r_end = RANGES[unit][1]
-      errors = []
-      range.each do |v|
-        errors.push v unless v.between?(r_start, r_end)
-      end
-      msg = "Not allowed value for #{unit}: '#{str}', allowed range #{r_start}-#{r_end}"
-      raise ValidationError, msg unless errors.empty?
-    end
-
     def str_for(str, time_unit)
       str[POSITION[time_unit]]
-    end
-
-    def all_range_for(time_unit)
-      ranges = RANGES[time_unit]
-      (ranges[0]..ranges[1]).to_a
-    end
-
-    def sub_range(str, unit)
-      edges = parse_range_edges(str)
-      validate_range(edges.values, unit, str)
-      (edges[:start]..edges[:end]).to_a
-    end
-
-    def parse_range_edges(str)
-      sub_str = str.split('-').map(&:to_i)
-      { start: sub_str[0], end: sub_str[1] }
-    end
-
-    def interval_range(str, unit)
-      r_start = RANGES[unit][0]
-      r_end = RANGES[unit][1]
-      range = [r_start]
-      interval = str.match(%r{^\*\/(\d+)$})[1].to_i
-
-      while (next_period = range.last + interval) <= r_end
-        range.push next_period
-      end
-
-      range
-    end
-
-    def explicity_range(str)
-      str.split(/,/).map(&:to_i)
     end
 
     def full_range_rule?(str)
