@@ -19,7 +19,7 @@ describe CronExpressionParser::Main do
       <<~OUTPUT
         minute        0 15 30 45
         hour          0
-        day of mount  1 15
+        day of month  1 15
         month         1 2 3 4 5 6 7 8 9 10 11 12
         day of week   1 2 3 4 5
         command       /usr/bin/find
@@ -31,11 +31,7 @@ describe CronExpressionParser::Main do
 
   context 'when pass invalid cron string' do
     let(:input) { 'invalid input' }
-    let(:outup) do
-      <<~ERROR
-        Validation Error: The input 'invalid input' is not valid!
-      ERROR
-    end
+    let(:output) { 'Validation Error: Must have 6 parts' }
 
     it { expect(subject.exec(input)).to eq(output) }
   end
