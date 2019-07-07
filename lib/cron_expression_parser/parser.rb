@@ -1,25 +1,29 @@
 # frozen_string_literal: true
 
 module CronExpressionParser
-  POSITION = {
-    minute: 0,
-    hour: 1,
-    day_of_month: 2,
-    month: 3,
-    day_of_week: 4
-  }
-  RANGES = {
-    minute: [0, 59],
-    hour: [0, 23],
-    day_of_month: [1, 31],
-    month: [1, 12],
-    day_of_week: [1, 7]
-  }
+  class ValidationError < RuntimeError; end
 
   # String parser
   class Parser
+    POSITION = {
+      minute: 0,
+      hour: 1,
+      day_of_month: 2,
+      month: 3,
+      day_of_week: 4
+    }
+    RANGES = {
+      minute: [0, 59],
+      hour: [0, 23],
+      day_of_month: [1, 31],
+      month: [1, 12],
+      day_of_week: [1, 7]
+    }
+
     def parse(str)
       str = str.split(/\s+/)
+      raise ValidationError, 'Must have 6 parts' if str.size < 6
+
       {
         minute: parse_rule_for(str, :minute),
         hour: parse_rule_for(str, :hour),
@@ -33,19 +37,41 @@ module CronExpressionParser
     private
 
       def parse_rule_for(str, time_unit)
-        time_unit_str = str_for(str, time_unit)
+        tu_str = str_for(str, time_unit)
+        raise ValidationError, "Unexpected option: '#{tu_str}'" if invalid_str?(tu_str)
 
-        if full_range_rule?(time_unit_str)
+        if full_range_rule?(tu_str)
           all_range_for(time_unit)
-        elsif sub_range_rule?(time_unit_str)
-          sub_range(time_unit_str)
-        elsif by_interval_rule?(time_unit_str)
-          interval_range(time_unit_str, time_unit)
-        elsif explicity_range_rule?(time_unit_str)
-          explicity_range(time_unit_str)
+        elsif sub_range_rule?(tu_str)
+          sub_range(tu_str, time_unit)
+        elsif by_interval_rule?(tu_str)
+          interval_range(tu_str, time_unit)
+        elsif explicity_range_rule?(tu_str)
+          explicity_range(tu_str, time_unit)
         else
-          [time_unit_str.to_i]
+          str = tu_str.to_i
+          range = [str]
+          validate_range(range, time_unit, str)
+          range
         end
+      end
+
+      def invalid_str?(str)
+        return false if (t = str.match /(?![-,\,,\*,\/,\d])./).nil?
+        true
+      end
+
+      def validate_range(range, unit, str)
+        r_start = RANGES[unit][0]
+        r_end = RANGES[unit][1]
+        errors = []
+        range.each do |v|
+          unless v.between?(r_start, r_end)
+            errors.push v
+          end
+        end
+        msg = "Not allowed value for #{unit.to_s}: '#{str}', allowed range #{r_start}-#{r_end}"
+        raise ValidationError, msg unless errors.empty?
       end
 
       def str_for(str, time_unit)
@@ -57,8 +83,9 @@ module CronExpressionParser
         (ranges[0]..ranges[1]).to_a
       end
 
-      def sub_range(str)
+      def sub_range(str, unit)
         edges = parse_range_edges(str)
+        validate_range(edges.values, unit, str)
         (edges[:start]..edges[:end]).to_a
       end
 
@@ -80,7 +107,7 @@ module CronExpressionParser
         range
       end
 
-      def explicity_range(str)
+      def explicity_range(str, unit)
         str.split(/,/).map(&:to_i)
       end
 
