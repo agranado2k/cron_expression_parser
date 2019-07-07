@@ -32,7 +32,13 @@ module CronExpressionParser
     private
 
       def parse_rule_for(str, time_unit)
-        str_for(str, time_unit) == '*' ? all_range_for(time_unit): [0]
+        time_unit_str = str_for(str, time_unit)
+
+        if time_unit_str == '*'
+          all_range_for(time_unit)
+        else
+          [time_unit_str.to_i]
+        end
       end
 
       def str_for(str, time_unit)
