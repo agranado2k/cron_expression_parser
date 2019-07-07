@@ -15,7 +15,7 @@ describe CronExpressionParser::Parser do
   end
 
   def output(override)
-    base_ouptut.merge(override)
+    base_output.merge(override)
   end
 
   context 'when receive valid string' do
@@ -38,21 +38,21 @@ describe CronExpressionParser::Parser do
     context 'when using different variations for time period' do
       context 'when define one time unit' do
         let(:input) { '0 0 5 0 0 /usr/bin/find' }
-        let(:local_output) { ouptut(day_of_month: [5]) }
+        let(:local_output) { output(day_of_month: [5]) }
 
         it { expect(subject.parse(input)).to eq(local_output) }
       end
 
       context 'when define range of time unit' do
         let(:input) { '0 0 2-6 0 0 /usr/bin/find' }
-        let(:local_output) { ouptut(day_of_month: [2, 3, 4, 5, 6]) }
+        let(:local_output) { output(day_of_month: [2, 3, 4, 5, 6]) }
 
         it { expect(subject.parse(input)).to eq(local_output) }
       end
 
       context 'when define time unit range for every interval' do
         let(:input) { '*/20 0 0 0 0 /usr/bin/find' }
-        let(:local_output) { ouptut(minute: [0, 20, 40]) }
+        let(:local_output) { output(minute: [0, 20, 40]) }
 
         it { expect(subject.parse(input)).to eq(local_output) }
       end
@@ -60,35 +60,35 @@ describe CronExpressionParser::Parser do
       context 'when define all time units in valid range' do
         context 'for minutes' do
           let(:input) { '* 0 0 0 0 /usr/bin/find' }
-          let(:local_output) { ouptut(minute: (0..59).to_a) }
+          let(:local_output) { output(minute: (0..59).to_a) }
 
           it { expect(subject.parse(input)).to eq(local_output) }
         end
 
         context 'for hours' do
           let(:input) { '0 * 0 0 0 /usr/bin/find' }
-          let(:local_output) { ouptut(minute: (0..59).to_a) }
+          let(:local_output) { output(hour: (0..23).to_a) }
 
           it { expect(subject.parse(input)).to eq(local_output) }
         end
 
         context 'for day of month' do
           let(:input) { '0 0 * 0 0 /usr/bin/find' }
-          let(:local_output) { ouptut(minute: (1..31).to_a) }
+          let(:local_output) { output(day_of_month: (1..31).to_a) }
 
           it { expect(subject.parse(input)).to eq(local_output) }
         end
 
         context 'for month' do
           let(:input) { '0 0 0 * 0 /usr/bin/find' }
-          let(:local_output) { ouptut(minute: (1..12).to_a) }
+          let(:local_output) { output(month: (1..12).to_a) }
 
           it { expect(subject.parse(input)).to eq(local_output) }
         end
 
         context 'for day of week' do
-          let(:input) { '0 0 0 * 0 /usr/bin/find' }
-          let(:local_output) { ouptut(minute: (1..7).to_a) }
+          let(:input) { '0 0 0 0 * /usr/bin/find' }
+          let(:local_output) { output(day_of_week: (1..7).to_a) }
 
           it { expect(subject.parse(input)).to eq(local_output) }
         end
