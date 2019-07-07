@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/cron_expression_parser'
+
+parser = CronExpressionParser::Parser.new
+formatter = CronExpressionParser::Formatter.new
+io = CronExpressionParser::IO.new
+ce = CronExpressionParser::Main.new(parser: parser, formatter: formatter, io: io)
+input = ARGV[0] || ''
+ce.exec(input)
