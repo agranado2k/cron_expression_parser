@@ -43,7 +43,7 @@ describe CronExpressionParser::Parser do
         it { expect(subject.parse(input)).to eq(local_output) }
       end
 
-      context 'when define range of time unit' do
+      context 'when define sub range of time unit' do
         let(:input) { '0 0 2-6 0 0 /usr/bin/find' }
         let(:local_output) { output(day_of_month: [2, 3, 4, 5, 6]) }
 
