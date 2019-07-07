@@ -34,8 +34,10 @@ module CronExpressionParser
       def parse_rule_for(str, time_unit)
         time_unit_str = str_for(str, time_unit)
 
-        if time_unit_str == '*'
+        if full_range_rule?(time_unit_str)
           all_range_for(time_unit)
+        elsif sub_range_rule?(time_unit_str)
+          sub_range(time_unit_str)
         else
           [time_unit_str.to_i]
         end
@@ -48,6 +50,24 @@ module CronExpressionParser
       def all_range_for(time_unit)
         ranges = RANGES[time_unit]
         (ranges[0]..ranges[1]).to_a
+      end
+
+      def sub_range(str)
+        edges = parse_range_edges(str)
+        (edges[:start]..edges[:end]).to_a
+      end
+
+      def parse_range_edges(str)
+        sub_str = str.split('-').map(&:to_i)
+        {start: sub_str[0], end: sub_str[1]}
+      end
+
+      def full_range_rule?(str)
+        str == '*'
+      end
+
+      def sub_range_rule?(str)
+        str.include?('-')
       end
   end
 end
