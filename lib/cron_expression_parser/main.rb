@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module CronExpressionParser
+  # Class that manage the command execution
   class Main
     def initialize(io:)
       @io = io
