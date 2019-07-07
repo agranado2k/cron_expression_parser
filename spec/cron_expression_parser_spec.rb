@@ -3,11 +3,18 @@
 require 'spec_helper'
 
 describe CronExpressionParser::Main do
+  class FakeIO
+    def print(str)
+      str
+    end
+  end
+
+  let(:fake_io) { FakeIO.new }
+  subject { CronExpressionParser::Main.new(io: fake_io) }
   context 'when pass valid cron string' do
     let(:input) { '*/15 0 1,15 * 1-5 /usr/bin/find' }
     let(:output) do
       <<~END
-        12345678901234
         minute        0 15 30 45
         hour          0
         day of mount  1 15
@@ -17,7 +24,7 @@ describe CronExpressionParser::Main do
       END
     end
 
-    it { expect(subject.parse(input)).to eq(output) }
+    it { expect(subject.exec(input)).to eq(output) }
   end
 
   context 'when pass invalid cron string' do
