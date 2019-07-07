@@ -7,7 +7,9 @@ module CronExpressionParser
     end
 
     def exec(input)
-      @io.print(input)
+      parsed_str = @parser.parse(input)
+      formatted_output = @format_output.table(parsed_str)
+      @io.print(formatted_output)
     end
   end
 end
