@@ -40,6 +40,8 @@ module CronExpressionParser
           sub_range(time_unit_str)
         elsif by_interval_rule?(time_unit_str)
           interval_range(time_unit_str, time_unit)
+        elsif explicity_range_rule?(time_unit_str)
+          explicity_range(time_unit_str)
         else
           [time_unit_str.to_i]
         end
@@ -77,6 +79,10 @@ module CronExpressionParser
         range
       end
 
+      def explicity_range(str)
+        str.split(/,/).map(&:to_i)
+      end
+
       def full_range_rule?(str)
         str.match /^\*$/
       end
@@ -87,6 +93,10 @@ module CronExpressionParser
 
       def by_interval_rule?(str)
         str.match /\*\/\d?\d/
+      end
+
+      def explicity_range_rule?(str)
+        str.match /(\d?\d,\d?\d)+/
       end
   end
 end

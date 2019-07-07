@@ -57,8 +57,15 @@ describe CronExpressionParser::Parser do
         it { expect(subject.parse(input)).to eq(local_output) }
       end
 
+      context 'when define time unit explicity range' do
+        let(:input) { '10,20,25 0 0 0 0 /usr/bin/find' }
+        let(:local_output) { output(minute: [10, 20, 25]) }
+
+        it { expect(subject.parse(input)).to eq(local_output) }
+      end
+
       context 'when define command' do
-        let(:input) { '*/20 0 0 0 0 /different/command' }
+        let(:input) { '0 0 0 0 0 /different/command' }
         let(:local_output) { output(commmand: '/different/command') }
 
         it { expect(subject.parse(input)).to eq(local_output) }
